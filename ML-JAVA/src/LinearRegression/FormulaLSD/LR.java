@@ -21,7 +21,7 @@ public class LR {
 	}
 	
 	
-	private Matrix readMatrix(String fileName) {
+	public Matrix readMatrix(String fileName) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(fileName));
 			List<double[]> data_array = new ArrayList<double[]>();
@@ -56,7 +56,7 @@ public class LR {
 	}
 	
 	
-	private Matrix getDataPoints(Matrix data_set) {
+	public Matrix getDataPoints(Matrix data_set) {
 		Matrix features = data_set.getMatrix(0, data_set.getRowDimension() - 1, 0, data_set.getColumnDimension() - 2);
 		int rows = features.getRowDimension();
 		int cols = features.getColumnDimension() + 1;
@@ -74,7 +74,7 @@ public class LR {
 	}
 	
 	
-	private Matrix getTargets(Matrix data_set) {
+	public Matrix getTargets(Matrix data_set) {
 	    return data_set.getMatrix(0, data_set.getRowDimension() - 1, data_set.getColumnDimension() - 1, data_set.getColumnDimension() - 1);
 	}
 	
@@ -85,7 +85,7 @@ public class LR {
 	 * 
 	 */
 	
-	private Matrix trainLinearRegressionModel(Matrix data, Matrix targets, Double lambda) {
+	public Matrix trainLinearRegressionModel(Matrix data, Matrix targets, Double lambda) {
 		int row = data.getRowDimension();
 		int column = data.getColumnDimension();
 		Matrix identity = Matrix.identity(column, column);
@@ -102,7 +102,7 @@ public class LR {
 	}
 	
 	
-	private double evaluateLinearRegressionModel(Matrix data, Matrix targets, Matrix weights) {
+	public double evaluateLinearRegressionModel(Matrix data, Matrix targets, Matrix weights) {
 		double error = 0.0;
 		int row = data.getRowDimension();
 		int column = data.getColumnDimension();
