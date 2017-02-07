@@ -73,4 +73,50 @@ public class svm {
 		
 		return data;
 	}
+	
+	public void minimizeTheta(double [] theta,Matrix dataset)
+	{
+		double smallestDistancePos=0;double smallestDistanceNeg=0;
+		
+		for(int e=0;e<dataset.getRowDimension();e++)
+		{
+			double [] x=getDouble(dataset, e);
+			if(x[x.length-1]==1)
+			{
+				
+			}
+			else if(x[x.length-1]==0)
+			{
+				
+			}
+			
+		}
+		
+	}
+	
+	public double calculateDistance(double[] point,double[] theta)
+	{
+		//findPerpendicular
+		double[] pLineTheta=new double[theta.length];
+		for(int i=1;i<theta.length;i++)
+		{
+			pLineTheta[i]=-(1/theta[i]);
+		}
+		//find intersect point
+		
+	pLineTheta[0]=0;
+	double rightside=0;
+	double leftside=0;
+	for(int i=0;i<theta.length;i++)
+	{
+		 rightside=+theta[i]*point[i];
+		 leftside=+point[i];
+	}
+	pLineTheta[0]=rightside-leftside;//y value
+	
+	
+	
+	
+		
+	}
 }
