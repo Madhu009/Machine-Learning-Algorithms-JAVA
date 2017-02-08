@@ -37,7 +37,7 @@ public class Network {
 		data_set=obj.readMatrix(fileName);
 		Matrix x_s=network.getDataPoints(data_set);
 		Matrix y_s=network.getTargets(data_set);
-		network.createNetwork(x_s);
+	
 		
 	}
 	
@@ -71,10 +71,40 @@ public class Network {
 		error=value-outputLayer.getValue();
 		deltaSum=(((1-getSigmoid(outputLayer.getValue()))*getSigmoid(outputLayer.getValue()))*error);
 		
-		double[] weights=new double[3];
-		for(int i=)
+		double[] deltaWeights=new double[3];
 		
+		for(int i=0;i<3;i++)
+		{
+			deltaWeights[i]=(deltaSum/hiddenLayer.get(i+1).getA());
+		}
+		double oldHiddenWeights[]=new double[3];
+		for(int i=0;i<3;i++)
+		{
+			double updatedWeight=hiddenLayer.get(i+1).getWeight()[0]+deltaWeights[i];
+			oldHiddenWeights[i]=hiddenLayer.get(i+1).getWeight()[0];
+			hiddenLayer.get(i+1).set0Weight(updatedWeight);
+		}
 	
+		double[] deltaHiddenSum=new double[3];
+		
+		for(int i=0;i<3;i++)
+		{
+			double sigInverse=(1-getSigmoid(hiddenLayer.get(i+1).getValue()))*getSigmoid(hiddenLayer.get(i+1).getValue());
+			deltaHiddenSum[i]=(deltaSum/oldHiddenWeights[i])*sigInverse;
+		}
+		
+		
+		for(int i=0;i<2;i++)
+		{
+			double[] deltaInputWeights=new double[3];
+			for(int j=0;j<3;j++)
+			{
+				deltaInputWeights[i]=deltaHiddenSum[j]/inputLayer.get(i+1).getValue();
+			}
+			inputLayer.get(i+1).setWeight(deltaInputWeights);
+		}
+		
+		
 	}
 	
 	

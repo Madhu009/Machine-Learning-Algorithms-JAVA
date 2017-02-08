@@ -52,4 +52,8 @@ public class Neuron {
 		this.weight = weight;
 	}
 	
+	public void set0Weight(double weight) {
+		this.weight[0] = weight;
+	}
+	
 }
