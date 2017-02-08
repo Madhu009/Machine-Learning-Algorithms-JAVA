@@ -37,7 +37,7 @@ public class Network {
 		data_set=obj.readMatrix(fileName);
 		Matrix x_s=network.getDataPoints(data_set);
 		Matrix y_s=network.getTargets(data_set);
-	
+		network.createNetwork(x_s, y_s);
 		
 	}
 	
@@ -68,7 +68,7 @@ public class Network {
 		double deltaSum=0;//change in sum value;
 		double error=0;//sigmoid error
 		
-		error=value-outputLayer.getValue();
+		error=value-outputLayer.getA();
 		deltaSum=(((1-getSigmoid(outputLayer.getValue()))*getSigmoid(outputLayer.getValue()))*error);
 		
 		double[] deltaWeights=new double[3];
@@ -117,16 +117,21 @@ public class Network {
 		
 		inputLayer.get(0).setValue(1);//set bias
 		
-		for(int i=0;i<rows;i++)
+		for(int i=0;i<=10000;i++)
 		{
-			double [] data=getDouble(x_s, i);//get the example
+			double [] data=getDouble(x_s, 0);//get the example
 			
 			 for(int j=0;j<data.length;j++)
 			{
 				inputLayer.get(j+1).setValue(data[j]);
 			}
+			 System.out.println(i);
+			 if(i==290)
+			 {
+				 System.out.println("print");
+			 }
 			forwardPropagation();
-			
+			backPropagation(0);
 		}
 		
 	}
