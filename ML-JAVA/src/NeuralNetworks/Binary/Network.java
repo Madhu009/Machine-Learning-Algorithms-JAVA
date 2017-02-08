@@ -19,18 +19,28 @@ public class Network {
 		inputLayer=new ArrayList<Neuron>();
 	}
 	
+	public Matrix getDataPoints(Matrix data_set) {
+	return data_set.getMatrix(0, data_set.getRowDimension() - 1, 0, data_set.getColumnDimension() - 2);
+	
+	}
+	
+	
+	public Matrix getTargets(Matrix data_set) {
+	    return data_set.getMatrix(0, data_set.getRowDimension() - 1, data_set.getColumnDimension() - 1, data_set.getColumnDimension() - 1);
+	}
+	
 	public static void main(String args[])
 	{
 		Network network=new Network();
-		network.getInputLayer();
-		network.getHiddeLayer();
 		LR obj=new LR();
 		Matrix data_set;
 		data_set=obj.readMatrix(fileName);
-		Matrix x_s=obj.getDataPoints(data_set);
-		Matrix y_s=obj.getTargets(data_set);
+		Matrix x_s=network.getDataPoints(data_set);
+		Matrix y_s=network.getTargets(data_set);
+		network.createNetwork(x_s);
 		
 	}
+	
 	
 	public void forwardPropagation()
 	{
@@ -38,12 +48,12 @@ public class Network {
 		for(int j=0;j<3;j++)
 		{
 			double hyp=0;
-			for(int i=0;i<2;i++)
+			for(int i=0;i<3;i++)
 			{
-				hyp=+inputLayer.get(i).getWeight()[j]*inputLayer.get(i).getValue();
+				hyp=hyp+(inputLayer.get(i).getWeight()[j]*inputLayer.get(i).getValue());
 			}
-			hiddenLayer.get(j).setValue(hyp);
-			hiddenLayer.get(j).setA(getSigmoid(hyp));
+			hiddenLayer.get(j+1).setValue(hyp);
+			hiddenLayer.get(j+1).setA(getSigmoid(hyp));
 			
 			outputValue=outputValue+(hiddenLayer.get(j).getValue()*hiddenLayer.get(j).getWeight()[0]);
 			
@@ -52,26 +62,71 @@ public class Network {
 		outputLayer.setA(getSigmoid(outputValue));
 	}
 	
+	
+	public void backPropagation(double value)
+	{
+		double deltaSum=0;//change in sum value;
+		double error=0;//sigmoid error
+		
+		error=value-outputLayer.getValue();
+		deltaSum=(((1-getSigmoid(outputLayer.getValue()))*getSigmoid(outputLayer.getValue()))*error);
+		
+		double[] weights=new double[3];
+		for(int i=)
+		
+	
+	}
+	
+	
+	public void createNetwork(Matrix x_s,Matrix y_s)
+	{
+		getInputLayer();
+		getHiddeLayer();
+		
+		int rows=x_s.getRowDimension();
+		
+		inputLayer.get(0).setValue(1);//set bias
+		
+		for(int i=0;i<rows;i++)
+		{
+			double [] data=getDouble(x_s, i);//get the example
+			
+			 for(int j=0;j<data.length;j++)
+			{
+				inputLayer.get(j+1).setValue(data[j]);
+			}
+			forwardPropagation();
+			
+		}
+		
+	}
+	
+	
+	public void getInputLayer()
+	{
+		Neuron x=new Neuron(3);
+		Neuron y=new Neuron(3);
+		Neuron bias=new Neuron(3);
+		inputLayer.add(bias);
+		inputLayer.add(x);
+		inputLayer.add(y);
+	}
+	public void getHiddeLayer()
+	{
+		Neuron h1=new Neuron(1);
+		Neuron h2=new Neuron(1);
+		Neuron h3=new Neuron(1);
+		Neuron bias=new Neuron(1);
+		hiddenLayer.add(bias);
+		hiddenLayer.add(h1);hiddenLayer.add(h2);
+		hiddenLayer.add(h3);
+	}
+	
 	public double getSigmoid(double hyp)
 	{
 		 return 1.0/(1+Math.exp(-hyp));
 	}
 	
-	public void createNetwork(Matrix x_s)
-	{
-		int rows=x_s.getRowDimension();
-		
-		for(int i=0;i<rows;i++)
-		{
-			double [] data=getDouble(x_s, i);
-			for(int j=0;j<data.length;j++)
-			{
-				inputLayer.get(j).setValue(data[j]);
-			}
-			
-		}
-		
-	}
 	
 	public double[] getDouble(Matrix m,int index)
 	{
@@ -84,20 +139,5 @@ public class Network {
 		}
 		
 		return data;
-	}
-	public void getInputLayer()
-	{
-		Neuron x=new Neuron(3);
-		Neuron y=new Neuron(3);
-		inputLayer.add(x);
-		inputLayer.add(y);
-	}
-	public void getHiddeLayer()
-	{
-		Neuron h1=new Neuron(1);
-		Neuron h2=new Neuron(1);
-		Neuron h3=new Neuron(1);
-		inputLayer.add(h1);inputLayer.add(h2);
-		inputLayer.add(h3);
 	}
 }
