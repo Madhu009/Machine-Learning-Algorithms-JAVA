@@ -114,7 +114,7 @@ public class svm {
 	}
 	pLineTheta[0]=rightside-leftside;//y value
 	
-	
+	return 0.9;
 	
 	
 		
