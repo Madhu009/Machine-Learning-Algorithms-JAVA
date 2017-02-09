@@ -23,7 +23,7 @@ public class Neuron {
 	double epsilon = Math.max(Math.ulp(0), Math.ulp(0));
 	public Neuron(int weightValue)
 	{
-		A=0;
+		A=1;
 		r=new Random();
 		double min=0.0;
 		double max=1.0;

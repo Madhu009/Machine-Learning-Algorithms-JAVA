@@ -58,24 +58,34 @@ public class Network {
 			outputValue=outputValue+(hiddenLayer.get(j).getValue()*hiddenLayer.get(j).getWeight()[0]);
 			
 		}
+		outputValue=outputValue+(hiddenLayer.get(3).getValue()*hiddenLayer.get(3).getWeight()[0]);
+
 		outputLayer.setValue(outputValue);
 		outputLayer.setA(getSigmoid(outputValue));
 	}
 	
 	
-	public void backPropagation(double value)
+	public double backPropagation(double value)
 	{
+		double learningRate=0.05;
 		double deltaSum=0;//change in sum value;
 		double error=0;//sigmoid error
 		
 		error=value-outputLayer.getA();
 		deltaSum=(((1-getSigmoid(outputLayer.getValue()))*getSigmoid(outputLayer.getValue()))*error);
 		
+		double[] deltaHiddenSum=new double[3];
+		for(int i=0;i<3;i++)
+		{
+			double sigInverse=(1-getSigmoid(hiddenLayer.get(i+1).getValue()))*getSigmoid(hiddenLayer.get(i+1).getValue());
+			deltaHiddenSum[i]=deltaSum*hiddenLayer.get(i).getWeight()[0]*sigInverse;
+		}
+		
 		double[] deltaWeights=new double[3];
 		
 		for(int i=0;i<3;i++)
 		{
-			deltaWeights[i]=(deltaSum/hiddenLayer.get(i+1).getA());
+			deltaWeights[i]=(deltaSum*hiddenLayer.get(i+1).getA()*learningRate);
 		}
 		double oldHiddenWeights[]=new double[3];
 		for(int i=0;i<3;i++)
@@ -85,26 +95,23 @@ public class Network {
 			hiddenLayer.get(i+1).set0Weight(updatedWeight);
 		}
 	
-		double[] deltaHiddenSum=new double[3];
-		
-		for(int i=0;i<3;i++)
-		{
-			double sigInverse=(1-getSigmoid(hiddenLayer.get(i+1).getValue()))*getSigmoid(hiddenLayer.get(i+1).getValue());
-			deltaHiddenSum[i]=(deltaSum/oldHiddenWeights[i])*sigInverse;
-		}
-		
-		
 		for(int i=0;i<2;i++)
 		{
 			double[] deltaInputWeights=new double[3];
 			for(int j=0;j<3;j++)
 			{
-				deltaInputWeights[i]=deltaHiddenSum[j]/inputLayer.get(i+1).getValue();
+				deltaInputWeights[i]=deltaHiddenSum[j]*inputLayer.get(i+1).getValue()*learningRate;
 			}
 			inputLayer.get(i+1).setWeight(deltaInputWeights);
 		}
 		
-		
+		return Math.pow(error, 2);
+	}
+	public void predict(double[] x)
+	{
+		inputLayer.get(1).setValue(x[0]);
+		inputLayer.get(2).setValue(x[1]);
+		forwardPropagation();
 	}
 	
 	
@@ -116,23 +123,28 @@ public class Network {
 		int rows=x_s.getRowDimension();
 		
 		inputLayer.get(0).setValue(1);//set bias
-		
-		for(int i=0;i<=10000;i++)
+		hiddenLayer.get(0).setValue(1);
+		int c=0;
+		for(int epoch=0;epoch<1000;epoch++)
 		{
-			double [] data=getDouble(x_s, 0);//get the example
-			
-			 for(int j=0;j<data.length;j++)
+			for(int i=0;i<rows;i++)
 			{
-				inputLayer.get(j+1).setValue(data[j]);
+				double [] data=getDouble(x_s, i);//get the example
+				for(int j=0;j<data.length;j++)
+				{
+					inputLayer.get(j+1).setValue(data[j]);
+				}
+				 forwardPropagation();
+				backPropagation(y_s.get(i, 0));
 			}
-			 System.out.println(i);
-			 if(i==290)
-			 {
-				 System.out.println("print");
-			 }
-			forwardPropagation();
-			backPropagation(0);
+			
+			System.out.println(++c);
 		}
+		
+		double[] x=new double[2];
+		x[0]=0;
+		x[1]=0;
+		predict(x);
 		
 	}
 	
